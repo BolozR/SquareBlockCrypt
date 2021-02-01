@@ -1,40 +1,69 @@
 package ru.crypt;
 
-import ru.crypt.controller.IpsilonTransform;
-import ru.crypt.controller.PiTransform;
-import ru.crypt.controller.ThetaTransform;
-import ru.crypt.model.Square;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
-import java.util.Arrays;
+import static ru.crypt.util.Utils.*;
 
 
 public class Main {
 
-    private static void print(Square square){
-        Arrays.stream(square.getSquare())
-                .forEach(v -> System.out.println(Arrays.toString(v)));
+    private static void frist(){
+        try {
+            FileInputStream fis = new FileInputStream("./src/main/resources/crypt.txt");
+            FileOutputStream fos = new FileOutputStream("./src/main/resources/encrypted.txt");
+
+            int[] input = new int[16];
+            while (fis.available() > 16) {
+                for (int i = 0; i < 16; i++) {
+                    input[i] = fis.read();
+                }
+                int[][] encrypted = encrypt(array2nding(input));
+                for (int[] i : encrypted) {
+                    for (int j : i) fos.write((byte) j);
+                }
+            }
+
+            while (fis.available() != 0) fos.write((byte) fis.read());
+            fos.close();
+            fis.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
+    private static void second(){
+        try {
+            Thread.sleep(1000);
+            FileInputStream fis = new FileInputStream("./src/main/resources/encrypted.txt");
+            FileOutputStream fos = new FileOutputStream("./src/main/resources/decrypted.txt");
+
+            int[] input = new int[16];
+
+            while (fis.available() > 16) {
+                for (int i = 0; i < 16; i++) {
+                    input[i] = fis.read();
+                }
+                int[][] encrypted = decrypt(array2nding(input));
+                for (int[] j : encrypted) {
+                    for (int k : j) fos.write((byte) k);
+                }
+            }
+
+            while (fis.available() != 0) fos.write((byte) fis.read());
+            fos.close();
+            fis.close();
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     public static void main(String[] args) {
-        Square square = new Square();
-        square.setSquare(new int[][]{
-                {0x02, 0x01, 0x01, 0x03},
-                {0x03, 0x02, 0x01, 0x01},
-                {0x01, 0x03, 0x02, 0x01},
-                {0x01, 0x01, 0x03, 0x02}});
 
-        Square theta = ThetaTransform.transform(square);
-        System.out.println("Theta:");
-        print(theta);
-
-        Square ipsilon = IpsilonTransform.transform(theta);
-        System.out.println("Ipsilon:");
-        print(ipsilon);
-
-        Square pi = PiTransform.transform(ipsilon);
-        System.out.println("Pi:");
-        print(pi);
-
+        frist();
+        second();
     }
 
 
