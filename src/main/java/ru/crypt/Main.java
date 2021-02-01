@@ -9,10 +9,10 @@ import static ru.crypt.util.Utils.*;
 
 public class Main {
 
-    private static void frist(){
+    private static void frist(String format){
         try {
-            FileInputStream fis = new FileInputStream("./src/main/resources/crypt.txt");
-            FileOutputStream fos = new FileOutputStream("./src/main/resources/encrypted.txt");
+            FileInputStream fis = new FileInputStream("./src/main/resources/crypt.".concat(format));
+            FileOutputStream fos = new FileOutputStream("./src/main/resources/encrypted.".concat(format));
 
             int[] input = new int[16];
             while (fis.available() > 16) {
@@ -33,11 +33,11 @@ public class Main {
         }
     }
 
-    private static void second(){
+    private static void second(String format){
         try {
             Thread.sleep(1000);
-            FileInputStream fis = new FileInputStream("./src/main/resources/encrypted.txt");
-            FileOutputStream fos = new FileOutputStream("./src/main/resources/decrypted.txt");
+            FileInputStream fis = new FileInputStream("./src/main/resources/encrypted.".concat(format));
+            FileOutputStream fos = new FileOutputStream("./src/main/resources/decrypted.".concat(format));
 
             int[] input = new int[16];
 
@@ -61,9 +61,9 @@ public class Main {
 
 
     public static void main(String[] args) {
-
-        frist();
-        second();
+        String format = "txt"; // or jpg
+        frist(format);
+        second(format);
     }
 
 
