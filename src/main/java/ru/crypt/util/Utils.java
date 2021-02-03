@@ -38,7 +38,7 @@ public class Utils {
         return res;
     }
 
-    private static void example(){
+    public static void example(){
         Square to = new Square();
         int[][] toEncrypt = {
                 {121, 111, 111, 113},

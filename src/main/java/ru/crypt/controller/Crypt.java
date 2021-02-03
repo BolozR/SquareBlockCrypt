@@ -10,69 +10,69 @@ import java.util.Arrays;
 
 public class Crypt {
     private static boolean print = true;
-    private static void print(Square square){
-        if(print)
-        Arrays.stream(square.getSquare())
-                .forEach(v -> System.out.println(Arrays.toString(v)));
+    private static void print(Square square, String name){
+        if(print) {
+            System.out.println(name);
+            Arrays.stream(square.getSquare())
+                    .forEach(v -> System.out.println(Arrays.toString(v)));
+        }
     }
 
     public static Square roundDecrypt(Square toDecrypt, Square key){
 
-        System.out.println("Start, round");
-        print(toDecrypt);
+        print(toDecrypt,"Start, round");
 
-        System.out.println("Delta:");
         Square delta = DeltaTransform.transform(toDecrypt, key.getSquare());
-        print(delta);
+        print(delta, "Delta:");
 
         Square pi = PiTransform.transform(delta);
-        System.out.println("Pi:");
-        print(pi);
+        print(pi, "Pi:");
 
         Square ipsilon = IpsilonTransform.transform(pi, true);
-        System.out.println("Ipsilon:");
-        print(ipsilon);
+        print(ipsilon, "Ipsilon:");
 
         Square theta = ThetaTransform.transform(ipsilon, true);
-        System.out.println("Theta:");
-        print(theta);
+        print(theta, "Theta:");
 
         return theta;
     }
 
     public static Square roundEncrypt(Square toEncrypt, Square key){
 
-        System.out.println("Start, round");
-        print(toEncrypt);
+        print(toEncrypt, "Start, round");
 
         Square theta = ThetaTransform.transform(toEncrypt, false);
-        System.out.println("Theta:");
-        print(theta);
+        print(theta, "Theta:");
 
         Square ipsilon = IpsilonTransform.transform(theta, false);
-        System.out.println("Ipsilon:");
-        print(ipsilon);
+        print(ipsilon, "Ipsilon:");
 
         Square pi = PiTransform.transform(ipsilon);
-        System.out.println("Pi:");
-        print(pi);
+        print(pi, "Pi:");
 
-        System.out.println("Delta:");
         Square delta = DeltaTransform.transform(pi, key.getSquare());
-        print(delta);
+        print(delta, "Delta:");
 
         return delta;
     }
 
     public static Square firstRound(Square square, Square key, boolean isReverse){
-        Square theta = ThetaTransform.transform(square, !isReverse);
-        System.out.println("Theta:");
-        print(theta);
+        if(isReverse){
+            Square delta = DeltaTransform.transform(square, key.getSquare());
+            print(delta, "Delta:");
 
-        System.out.println("Delta:");
-        Square delta = DeltaTransform.transform(theta, key.getSquare());
-        print(delta);
+            Square theta = ThetaTransform.transform(delta, false);
+            print(theta, "Theta:");
 
-        return delta;
+            return theta;
+        } else {
+            Square theta = ThetaTransform.transform(square, true);
+            print(theta, "Theta:");
+
+            Square delta = DeltaTransform.transform(theta, key.getSquare());
+            print(delta, "Delta:");
+
+            return delta;
+        }
     }
 }

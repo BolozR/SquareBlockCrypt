@@ -66,5 +66,4 @@ public class Main {
         second(format);
     }
 
-
 }
