@@ -11,7 +11,7 @@ public class Key {
                 {(int) 'i', (int) 'j', (int) 'k', (int) 'l'},
                 {(int) 'm', (int) 'n', (int) 'o', (int) 'p'}});
     }
-    private static int[] cConst = new int[]{1, 2, 4, 8, 16, 32, 64, 128};
+    private static int[] cConst = new int[]{1, 2, 4, 8, 16, 32, 64, 128, 1};
 
     public static Square keyGen(Square prevSq, int round){
         int[][] prevKey = prevSq.getSquare();

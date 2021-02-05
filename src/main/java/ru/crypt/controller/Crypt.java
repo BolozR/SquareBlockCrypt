@@ -9,7 +9,7 @@ import ru.crypt.transform.ThetaTransform;
 import java.util.Arrays;
 
 public class Crypt {
-    private static boolean print = true;
+    private static boolean print = false;
     private static void print(Square square, String name){
         if(print) {
             System.out.println(name);
@@ -74,5 +74,15 @@ public class Crypt {
 
             return delta;
         }
+    }
+
+    public static Square ofbMode(Square square, int[][] text){
+        Square result = new Square();
+        for (int i = 0; i < square.getSquare().length; i++){
+            for(int j = 0; j < square.getSquare()[0].length; j++){
+                result.getSquare()[i][j] = square.getSquare()[i][j] ^ text[i][j];
+            }
+        }
+        return result;
     }
 }

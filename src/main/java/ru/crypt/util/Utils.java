@@ -2,6 +2,7 @@ package ru.crypt.util;
 
 import ru.crypt.controller.Crypt;
 import ru.crypt.model.Key;
+import ru.crypt.model.Mode;
 import ru.crypt.model.Square;
 
 import java.util.Arrays;
@@ -11,9 +12,9 @@ public class Utils {
     private static Square[] keys = keysGen();
 
     private static Square[] keysGen(){
-        Square[] keys = new Square[8];
+        Square[] keys = new Square[9];
         keys[0] = Key.key;
-        for (int i = 1; i < 8; i++){
+        for (int i = 1; i < 9; i++){
             keys[i] = Key.keyGen(keys[i-1], i);
         }
         return keys;
@@ -34,7 +35,6 @@ public class Utils {
         }
         Square sq = new Square();
         sq.setSquare(res);
-        print(sq);
         return res;
     }
 
@@ -61,27 +61,77 @@ public class Utils {
         print(result);
     }
 
-    public static int[][] encrypt(int[][] toEncrypt){
+    public static int[][] encrypt(int[][] toEncrypt, Mode mode){
         Square to = new Square();
         to.setSquare(toEncrypt);
-        Square first = Crypt.firstRound(to, keys[0], false);
-        System.out.printf("Round encrypt: %d\n", 1);
-        Square encrypted = Crypt.roundEncrypt(first, keys[1]);
-        for (int i = 2; i < 8; i++) {
-            System.out.printf("Round encrypt: %d\n", i);
-            encrypted = Crypt.roundEncrypt(encrypted, keys[i]);
+        Square encrypted;
+
+        switch (mode){
+            case ECB: {
+                encrypted = Crypt.roundEncrypt(to, keys[0]);
+                break;
+            }
+            case CBC: {
+                encrypted = Crypt.roundEncrypt(to, keys[1]);
+                for (int i = 2; i < 9; i++) {
+                    encrypted = Crypt.roundEncrypt(encrypted, keys[i]);
+                }
+                break;
+            }
+            case OFB: {
+                Square first = Crypt.firstRound(to, keys[0], false);
+                encrypted = Crypt.roundEncrypt(first, keys[1]);
+                encrypted = Crypt.ofbMode(encrypted, toEncrypt);
+                for (int i = 2; i < 9; i++) {
+                    encrypted = Crypt.roundEncrypt(encrypted, keys[i]);
+                    encrypted = Crypt.ofbMode(encrypted, toEncrypt);
+                }
+                break;
+            }
+            default: {
+                Square first = Crypt.firstRound(to, keys[0], false);
+                encrypted = Crypt.roundEncrypt(first, keys[1]);
+                for (int i = 2; i < 9; i++) {
+                    encrypted = Crypt.roundEncrypt(encrypted, keys[i]);
+                }
+                break;
+            }
         }
+
         return encrypted.getSquare();
     }
 
-    public static int[][] decrypt(int[][] toEncrypt){
+    public static int[][] decrypt(int[][] toDecrypt, Mode mode){
         Square decrypted = new Square();
-        decrypted.setSquare(toEncrypt);
-        for (int i = 7; i >= 1; i--) {
-            System.out.printf("Round decrypt: %d\n", i);
-            decrypted = Crypt.roundDecrypt(decrypted, keys[i]);
+        decrypted.setSquare(toDecrypt);
+
+        switch (mode){
+            case ECB: {
+                decrypted = Crypt.roundDecrypt(decrypted, keys[0]);
+                break;
+            }
+            case CBC: {
+                for (int i = 8; i >= 1; i--) {
+                    decrypted = Crypt.roundDecrypt(decrypted, keys[i]);
+                }
+                break;
+            }
+            case OFB: {
+                for (int i = 8; i >= 1; i--) {
+                    decrypted = Crypt.roundDecrypt(decrypted, keys[i]);
+                    decrypted = Crypt.ofbMode(decrypted, toDecrypt);
+                }
+                decrypted = Crypt.firstRound(decrypted, keys[0], true);
+                break;
+            }
+            default: {
+                for (int i = 8; i >= 1; i--) {
+                    decrypted = Crypt.roundDecrypt(decrypted, keys[i]);
+                }
+                decrypted = Crypt.firstRound(decrypted, keys[0], true);
+                break;
+            }
         }
-        decrypted = Crypt.firstRound(decrypted, keys[0], true);
 
         return decrypted.getSquare();
     }

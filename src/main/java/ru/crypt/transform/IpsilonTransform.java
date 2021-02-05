@@ -26,9 +26,7 @@ public class IpsilonTransform {
                         191, 186, 111, 100, 217, 243,  62, 180, 170, 220, 213,   6, 192, 126, 246, 102,
                         108, 132, 113,  56, 185,  29, 127, 157,  72, 139,  42, 218, 165,  51, 130,  57,
                         214, 120, 134, 250, 228,  43, 169,  30, 137,  96, 107, 234,  85,  76, 247, 226})
-                .forEach(v -> table.add(v));
-
-        System.out.println(table);
+                .forEach(table::add);
     }
 
     public static Square transform(Square square, boolean isReverse){
