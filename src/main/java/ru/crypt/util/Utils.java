@@ -81,10 +81,10 @@ public class Utils {
             case OFB: {
                 Square first = Crypt.firstRound(to, keys[0], false);
                 encrypted = Crypt.roundEncrypt(first, keys[1]);
-                encrypted = Crypt.ofbMode(encrypted, toEncrypt);
+                encrypted = Crypt.ofbMode(Crypt.ofbMode(encrypted, toEncrypt), toEncrypt);
                 for (int i = 2; i < 9; i++) {
                     encrypted = Crypt.roundEncrypt(encrypted, keys[i]);
-                    encrypted = Crypt.ofbMode(encrypted, toEncrypt);
+                    //encrypted = Crypt.ofbMode(encrypted, toEncrypt);
                 }
                 break;
             }
@@ -119,8 +119,8 @@ public class Utils {
             case OFB: {
                 for (int i = 8; i >= 1; i--) {
                     decrypted = Crypt.roundDecrypt(decrypted, keys[i]);
-                    decrypted = Crypt.ofbMode(decrypted, toDecrypt);
                 }
+                decrypted = Crypt.ofbMode(Crypt.ofbMode(decrypted, toDecrypt), toDecrypt);
                 decrypted = Crypt.firstRound(decrypted, keys[0], true);
                 break;
             }

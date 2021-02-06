@@ -17,7 +17,7 @@ public class Main {
             FileOutputStream fos = new FileOutputStream("./src/main/resources/encrypted.".concat(format));
 
             int[] input = new int[16];
-            while (fis.available() > 16) {
+            while (fis.available() > 15) {
                 for (int i = 0; i < 16; i++) {
                     input[i] = fis.read();
                 }
@@ -27,7 +27,22 @@ public class Main {
                 }
             }
 
-            while (fis.available() != 0) fos.write((byte) fis.read());
+            int remaind = 0;
+            while (fis.available() != 0) {
+                input[remaind] = fis.read();
+                remaind++;
+            }
+            for(; remaind < 16; remaind++) {
+                input[remaind] = 0;
+            }
+
+            int[][] encrypted = encrypt(array2nding(input), mode);
+            for (int[] i : encrypted) {
+                for (int j : i) {
+                    fos.write((byte) j);
+                }
+            }
+
             fos.close();
             fis.close();
         } catch (IOException e) {
@@ -43,17 +58,18 @@ public class Main {
 
             int[] input = new int[16];
 
-            while (fis.available() > 16) {
+            while (fis.available() > 15) {
                 for (int i = 0; i < 16; i++) {
                     input[i] = fis.read();
                 }
                 int[][] encrypted = decrypt(array2nding(input), mode);
                 for (int[] j : encrypted) {
-                    for (int k : j) fos.write((byte) k);
+                    for (int k : j) {
+                        if (k != 0) fos.write((byte) k);
+                    }
                 }
             }
 
-            while (fis.available() != 0) fos.write((byte) fis.read());
             fos.close();
             fis.close();
         } catch (IOException | InterruptedException e) {
@@ -64,7 +80,7 @@ public class Main {
 
     public static void main(String[] args) {
         String format = "txt"; // txt or jpg
-        Mode mode = Mode.CFB; // ECB CFB CBC works
+        Mode mode = Mode.ECB; // ECB CFB CBC works
         encryptFile(format, mode);
         decryptFile(format, mode);
     }
