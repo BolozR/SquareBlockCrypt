@@ -65,7 +65,7 @@ public class Main {
                 int[][] encrypted = decrypt(array2nding(input), mode);
                 for (int[] j : encrypted) {
                     for (int k : j) {
-                        if (k != 0) fos.write((byte) k);
+                        if (fis.available() > 15 || k != 0) fos.write((byte) k);
                     }
                 }
             }
@@ -79,8 +79,8 @@ public class Main {
 
 
     public static void main(String[] args) {
-        String format = "txt"; // txt or jpg
-        Mode mode = Mode.ECB; // ECB CFB CBC works
+        String format = "jpg"; // txt or jpg
+        Mode mode = Mode.CFB; // ECB CFB CBC works
         encryptFile(format, mode);
         decryptFile(format, mode);
     }
